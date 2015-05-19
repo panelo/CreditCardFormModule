@@ -1,0 +1,157 @@
+<?php
+/**
+ * Implements hook_form_alter().
+ */
+function creditcard_form_alter(&$form, &$form_state, $form_id) {
+  	if ($form_id == 'credit_card_form') {
+    	$form['#submit'][] = 'creditcard_cc_form_submit';
+		$form['#validate'][] = 'creditcard_cc_form_validate';
+  	}
+	if ($form_id == 'voucher_form') {
+    	$form['#submit'][] = 'creditcard_v_form_submit';
+		$form['#validate'][] = 'creditcard_v_form_validate';
+  	}
+}
+
+/**
+ * Additional handler for credit card and voucher submit.
+ */
+function creditcard_cc_form_submit($form, &$form_state) {
+	$form_state['redirect'] = 'card_thankyou';
+}
+function creditcard_cc_form_validate($form, &$form_state) {
+	if (!preg_match('/^[0-9]+$/', $form_state['values']['card'])) {
+    	form_set_error('card', t('Please include numeric digits only in Card Number'));
+  	}
+	if (!preg_match('/^[0-9]+$/', $form_state['values']['cvv'])) {
+    	form_set_error('cvv', t('Please include numeric digits only in CVV'));
+  	}
+	if (strlen($form_state['values']['card'])!=16){
+     	form_set_error('card', 'Please enter 16-digit card number');
+    }
+	if (strlen($form_state['values']['cvv'])!=3){
+     	form_set_error('cvv', 'Please enter 3-digit cvv');
+    }
+}
+function creditcard_v_form_submit($form, &$form_state) {
+	$form_state['redirect'] = 'voucher_thankyou';
+}
+function creditcard_v_form_validate($form, &$form_state) {
+	if (!preg_match('/^[0-9]+$/', $form_state['values']['voucher'])) {
+    	form_set_error('voucher', t('Please include numeric digits only in Voucher Number'));
+  	}
+}
+
+/**
+ * Credit Card Form
+ */
+function credit_card_form($form, &$form_submit){
+	$form['left'] = array(
+		'#prefix' => '<div id="links"><div class="col-xs-6">',
+		'#suffix' => '</div></div>',
+  	);
+	$form['left']['cc-link'] = array(
+		'#markup' => '<p><a id="cc">Credit Card</a></p>',
+	);
+	$form['right'] = array(
+		'#prefix' => '<div id="creditcard"><div class="col-xs-6">',
+		'#suffix' => '</div></div>',
+	);
+	$form['right']['name'] = array(
+    	'#type' => 'textfield', 
+    	'#title' => t('Name'), 
+    	'#default_value' => '', 
+    	'#size' => 60,
+    	'#maxlength' => 128,
+    	'#required' => TRUE, 
+	);
+ 	$form['right']['card'] = array(
+    	'#type' => 'textfield', 
+    	'#title' => t('Card Number'), 
+    	'#default_value' => '', 
+    	'#size' => 60,
+    	'#maxlength' => 16,
+    	'#required' => TRUE, 
+	);
+	$form['right']['cvv'] = array(
+		'#type' => 'textfield', 
+		'#title' => t('CVV'), 
+		'#default_value' => '', 
+ 		'#size' => 3,
+		'#maxlength' => 3,
+		'#required' => TRUE, 
+	);
+	$form['right']['submit'] = array('#type' => 'submit', '#value' => t('Submit'));  
+ 	return $form;
+}
+
+/**
+ * Voucher Form
+ */
+function voucher_form($form, &$form_submit){
+  	$form['left'] = array(
+		'#prefix' => '<div id="links"><div class="col-xs-6">',
+		'#suffix' => '</div></div>',
+  	);	
+	$form['left']['v-link'] = array(
+		'#markup' => '<p><a id="v">Voucher</a></p>',
+	);	
+  	$form['right'] = array(
+		'#prefix' => '<div id="voucher"><div class="col-xs-6">',
+		'#suffix' => '</div></div>',
+	);
+  	$form['right']['vname'] = array(
+    	'#type' => 'textfield', 
+    	'#title' => t('Name'), 
+    	'#default_value' => '', 
+    	'#size' => 60,
+    	'#maxlength' => 128,
+    	'#required' => TRUE, 
+  	);
+	$form['right']['voucher'] = array(
+    	'#type' => 'textfield', 
+    	'#title' => t('Number'), 
+    	'#default_value' => '', 
+    	'#size' => 60,
+    	'#maxlength' => 128,
+    	'#required' => TRUE, 
+  	);
+  	$form['right']['submit'] = array('#type' => 'submit', '#value' => t('Submit'));  
+  	return $form;
+}
+
+/**
+ * Display Block
+ */
+function creditcard_block_info() {
+  	$blocks = array();    
+  	$blocks['credit_form'] = array(
+    	'info' => t('Credit Card'),
+    	'region' => 'content',
+    	'status' => TRUE,
+   		'visibility' => BLOCK_VISIBILITY_LISTED,
+    	'pages' => variable_get('site_frontpage', NULL),
+  	);
+	$blocks['v_form'] = array(
+    	'info' => t('Voucher'),
+    	'region' => 'content',
+    	'status' => TRUE,
+    	'visibility' => BLOCK_VISIBILITY_LISTED,
+    	'pages' => variable_get('site_frontpage', NULL),
+  	);
+  return $blocks;
+}
+
+function creditcard_block_view($delta = '') {
+  	$block = array();
+  	switch ($delta) {
+    	case 'credit_form':
+      	$block['content'] = drupal_get_form('credit_card_form');
+      	break;
+		case 'v_form':
+      	$block['content'] = drupal_get_form('voucher_form');
+      	break;
+ 	}
+	return $block;
+}
+?>

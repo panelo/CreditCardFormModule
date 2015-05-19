@@ -1,0 +1,12 @@
+(function ($) {
+    $(document).ready(function(){
+    	$("#cc").click(function(){
+		$("#voucher").hide();
+        	$("#creditcard").show();
+    	});
+	$("#v").click(function(){
+        	$("#creditcard").hide();
+		$("#voucher").show();
+    	});
+    });
+}(jQuery));

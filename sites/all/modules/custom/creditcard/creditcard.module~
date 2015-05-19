@@ -1,0 +1,126 @@
+<?php
+
+function credit_card_form($form, &$form_submit){
+
+$form['left'] = array(
+  '#prefix' => '<div class="col-xs-6">',
+  '#suffix' => '</div>',
+  );
+
+$form['left']['cc-link'] = array(
+  '#markup' => '<p><a id="cc">Credit Card</a></p>',
+  );
+
+$form['right'] = array(
+  '#prefix' => '<div id="creditcard"><div class="col-xs-6">',
+  '#suffix' => '</div></div>',
+  );
+
+  $form['right']['name'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('Name'), 
+    '#default_value' => '', 
+    '#size' => 60,
+    '#maxlength' => 128,
+    '#required' => TRUE, 
+  );
+ 
+ $form['right']['card'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('Card Number'), 
+    '#default_value' => '', 
+    '#size' => 60,
+    '#maxlength' => 128,
+    '#required' => TRUE, 
+  );
+
+$form['right']['cvv'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('CVV'), 
+    '#default_value' => '', 
+    '#size' => 60,
+    '#maxlength' => 3,
+    '#required' => TRUE, 
+  );
+   
+  $form['right']['submit'] = array('#type' => 'submit', '#value' => t('Submit'));  
+
+  return $form;
+}
+
+
+function voucher_form($form, &$form_submit){
+
+$form['left'] = array(
+  '#prefix' => '<div class="col-xs-6">',
+  '#suffix' => '</div>',
+  );
+
+$form['left']['v-link'] = array(
+  '#markup' => '<p><a id="v">Voucher</a></p>',
+  );
+
+$form['right'] = array(
+  '#prefix' => '<div id="voucher"><div class="col-xs-6">',
+  '#suffix' => '</div></div>',
+  );
+
+  $form['right']['vname'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('Name'), 
+    '#default_value' => '', 
+    '#size' => 60,
+    '#maxlength' => 128,
+    '#required' => TRUE, 
+  );
+
+$form['right']['voucher'] = array(
+    '#type' => 'textfield', 
+    '#title' => t('Voucher'), 
+    '#default_value' => '', 
+    '#size' => 60,
+    '#maxlength' => 128,
+    '#required' => TRUE, 
+  );
+   
+  $form['right']['submit'] = array('#type' => 'submit', '#value' => t('Submit'));  
+
+  return $form;
+}
+
+function creditcard_block_info() {
+  $blocks = array();    
+  $blocks['credit_form'] = array(
+    'info' => t('Credit Card'),
+    'region' => 'secondary_first',
+    'status' => TRUE,
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => variable_get('site_frontpage', NULL),
+  );
+$blocks['v_form'] = array(
+    'info' => t('Voucher'),
+    'region' => 'secondary_first',
+    'status' => TRUE,
+    'visibility' => BLOCK_VISIBILITY_LISTED,
+    'pages' => variable_get('site_frontpage', NULL),
+  );
+
+  return $blocks;
+}
+
+function creditcard_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'credit_form':
+      /*$block['subject'] = t('Credit Card');*/
+      $block['content'] = drupal_get_form('credit_card_form');
+      break;
+	case 'v_form':
+      /*$block['subject'] = t('Voucher');*/
+      $block['content'] = drupal_get_form('voucher_form');
+      break;
+  }
+
+  return $block;
+}
+?>

@@ -1,0 +1,5 @@
+name = "CreditCardForm"
+description = "Custom Credit Card Form block"
+package = "Custom"
+core = "7.x"
+scripts[] = script.js

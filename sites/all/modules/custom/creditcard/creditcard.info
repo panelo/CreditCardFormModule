@@ -1,0 +1,6 @@
+name = "CreditCardForm"
+description = "Custom Credit Card / Voucher Form block by John Panelo"
+core = "7.x"
+package = "Features"
+scripts[] = creditcard.js
+dependencies[] = jquery_update
